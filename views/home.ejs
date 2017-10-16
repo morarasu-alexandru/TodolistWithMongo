@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do complete app</title>
+    <link rel="stylesheet" href="/stylesheet/main.css">
+    <script src="/js/main.js" defer></script>
+</head>
+<body id="body">
+    <div id="target">
+        <h1>To do app</h1>
+        <form id="formTask" action="/" method="post">
+            <label for="todo">To do:</label>
+            <input id="todo" name="task" type="text" placeholder="Add new to do">
+            <button id="SubmitButton" type="submit">Submit</button>
+        </form>
+    </div>
+    <ul id="todoList">
+        <% for(i=0; i < todos.length; i++) { %>
+        <li>
+            <span><%= todos[i].task%> </span>
+            <form class="Form Delete" action="/<%=todos[i]._id%>?_method=DELETE" method="post">
+                <button class="Button Delete">Delete</button>
+            </form>
+        </li>
+       <% } %>
+    </ul>
+</body>
+</html>
