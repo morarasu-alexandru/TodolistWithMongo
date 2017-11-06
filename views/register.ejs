@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do complete app</title>
+    <link rel="stylesheet" href="/stylesheet/main.css">
+    <script src="/js/main.js" defer></script>
+</head>
+
+<body>
+    <h1>Register page</h1>
+    <% include ./partials/navigationMenu%>
+
+    <div>
+        <form action="/register" method="post">
+            <label for="UserInput">User name:</label>
+            <input id="UserInput" name="user[name]" type="text">
+            <label for="UserPassword">Password:</label>
+            <input id="UserPassword" name="user[password]" type="password">
+            <button id="CreateUserButton" type="submit">Create User</button>
+        </form>
+    </div>
+</body>

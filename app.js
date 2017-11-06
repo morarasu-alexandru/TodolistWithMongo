@@ -3,7 +3,8 @@ var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var methodOverride = require('method-override');
-
+var passport = require('passport');
+var LocalStrategy = require('passport-local').Strategy;
 
 app.set('view engine', 'ejs');
 app.use(express.static('statics'));
@@ -12,6 +13,39 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(methodOverride('_method'));
+
+//New to do, with user authentification
+
+var userSchema = new mongoose.Schema({
+    userName: String,
+    password: String,
+    taskList: {type: Array, default: []}
+});
+
+var User = mongoose.model('User', userSchema);
+
+passport.use('local', new LocalStrategy(
+    { usernameField : 'user.name',
+        passwordField : 'user.password'
+    },
+    function (username, password, done) {
+        console.log('ceva');
+        User.findOne({userName: username}, function (err, user) {
+            console.log(user);
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false, {message: 'Incorrect username.'});
+            }
+            if (user.password !== password) {
+                return done(null, false, {message: 'Incorrect password.'});
+            }
+            return done(null, user);
+        });
+    }
+));
+
 
 mongoose.connect('mongodb://localhost/to_do_app', {
     useMongoClient: true
@@ -24,6 +58,7 @@ db.once('open', function () {
     console.log('We are connected to Data base');
 });
 
+//Old to do
 var toDoSchema = new mongoose.Schema({
     task: {type: String, default: 'unset task'},
     ajaxRequest: {type: Boolean, default: false}
@@ -31,6 +66,8 @@ var toDoSchema = new mongoose.Schema({
 
 var Todo = mongoose.model('ToDo', toDoSchema);
 
+
+//Home page
 app.get('/', function (req, res) {
     Todo.find(function (err, tasks) {
         if (err) {
@@ -78,6 +115,48 @@ app.delete('/:id', function (req, res) {
         }
     });
 });
+
+//Register
+app.get('/register', function (req, res) {
+    res.render('register')
+});
+app.post('/register', function (req, res) {
+    var newUser = new User({
+        userName: req.body.user.name,
+        password: req.body.user.password
+    });
+
+    User.create(newUser, function (err, newUser) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(newUser);
+        }
+    });
+    res.redirect('/')
+});
+
+// Login page
+
+app.get('/login', function (req, res) {
+    res.render('login');
+});
+
+/*app.post('/login', passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+        failureFlash: false
+})
+);*/
+
+app.post('/login', passport.authenticate('local', {
+        successRedirect: '/',
+        failureRedirect: '/login',
+        failureFlash: false
+    }),
+    function (req, res) {
+        res.redirect('/');
+    });
 
 app.listen(3000, function () {
     console.log('app started')

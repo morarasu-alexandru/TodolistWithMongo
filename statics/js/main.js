@@ -38,7 +38,7 @@ function submitAjax() {
                 '<button>' + 'Delete' + '</button>' +
                 '</form>' +
                 '</li>');
-            console.log('bla ', addedTask.task);
+            console.log('addedTask: ', addedTask.task);
         }
     };
     http.send(JSON.stringify({task: taskInputValue, ajaxRequest: true}));
