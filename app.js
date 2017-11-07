@@ -1,3 +1,5 @@
+'use strict'
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -16,7 +18,7 @@ app.use(methodOverride('_method'));
 
 //New to do, with user authentification
 
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     userName: String,
     password: String,
     taskList: {type: Array, default: []}
@@ -24,9 +26,23 @@ var userSchema = new mongoose.Schema({
 
 var User = mongoose.model('User', userSchema);
 
-passport.use('local', new LocalStrategy(
-    { usernameField : 'user.name',
-        passwordField : 'user.password'
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(function(user, done) {
+    done(null, user.userName);
+});
+passport.deserializeUser(function(username, done) {
+    User.findOne({userName: username}, function (err, user) {
+    if(err) {
+        return done(err);
+    }
+    return done(null, user);
+    });
+});
+
+passport.use(new LocalStrategy(
+    { usernameField : 'user[name]',
+        passwordField : 'user[password]'
     },
     function (username, password, done) {
         console.log('ceva');
@@ -142,19 +158,12 @@ app.get('/login', function (req, res) {
     res.render('login');
 });
 
-/*app.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
-        failureRedirect: '/login',
-        failureFlash: false
-})
-);*/
-
 app.post('/login', passport.authenticate('local', {
         successRedirect: '/',
         failureRedirect: '/login',
         failureFlash: false
     }),
-    function (req, res) {
+     (req, res) => {
         res.redirect('/');
     });
 
