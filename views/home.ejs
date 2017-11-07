@@ -17,14 +17,6 @@
         </form>
     </div>
     <ul id="todoList">
-        <% for(i=0; i < todos.length; i++) { %>
-        <li>
-            <span><%= todos[i].task%> </span>
-            <form class="Form Delete" action="/<%=todos[i]._id%>?_method=DELETE" method="post">
-                <button class="Button Delete">Delete</button>
-            </form>
-        </li>
-       <% } %>
     </ul>
 </body>
 </html>

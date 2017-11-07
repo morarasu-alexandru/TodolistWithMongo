@@ -1,12 +1,10 @@
-'use strict'
-
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
-var methodOverride = require('method-override');
-var passport = require('passport');
-var LocalStrategy = require('passport-local').Strategy;
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const methodOverride = require('method-override');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 app.set('view engine', 'ejs');
 app.use(express.static('statics'));
@@ -67,69 +65,24 @@ mongoose.connect('mongodb://localhost/to_do_app', {
     useMongoClient: true
 });
 
-var db = mongoose.connection;
+let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
     // we're connected!
     console.log('We are connected to Data base');
 });
 
-//Old to do
-var toDoSchema = new mongoose.Schema({
-    task: {type: String, default: 'unset task'},
-    ajaxRequest: {type: Boolean, default: false}
-});
-
-var Todo = mongoose.model('ToDo', toDoSchema);
-
-
 //Home page
 app.get('/', function (req, res) {
-    Todo.find(function (err, tasks) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.render('home', {todos: tasks});
-        }
-    });
+    res.render('home')
 });
 
 app.post('/', function (req, res) {
-    var newTask = new Todo({
-        task: req.body.task,
-        ajaxRequest: req.body.ajaxRequest
-    });
-    newTask.save(function (err, task) {
-        if (err) {
-            console.log(err);
-        }
-        console.log("task added: ", task);
-        Todo.find(function (err, tasks) {
-            if (err) {
-                console.log(err);
-            }
-            else {
-                if (task.ajaxRequest) {
-                    res.send(task);
-                }
-                else {
-                    res.redirect('/')
-                }
-            }
-        });
-    });
+
 });
 
 app.delete('/:id', function (req, res) {
-    console.log(req.params);
-    console.log(req.params.id);
-    Todo.findByIdAndRemove(req.params.id, function (err) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.redirect('/');
-        }
-    });
+
 });
 
 //Register
@@ -137,7 +90,7 @@ app.get('/register', function (req, res) {
     res.render('register')
 });
 app.post('/register', function (req, res) {
-    var newUser = new User({
+    let newUser = new User({
         userName: req.body.user.name,
         password: req.body.user.password
     });
