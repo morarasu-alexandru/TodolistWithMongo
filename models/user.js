@@ -19,4 +19,30 @@ db.once('open', function () {
 
 const User = mongoose.model('User', userSchema);
 
+User.findUserName = (username, password, done) => {
+    User.findOne({userName: username}, (err, user) => {
+        console.log(user);
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            return done(null, false, {message: 'Incorrect username.'});
+        }
+        if (user.password !== password) {
+            return done(null, false, {message: 'Incorrect password.'});
+        }
+        return done(null, user);
+    });
+};
+
+User.createUser = (newUser) => {
+    User.create(newUser, (err, newUser) => {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(newUser);
+        }
+    });
+};
+
 module.exports = User;

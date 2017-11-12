@@ -8,14 +8,14 @@ const User = require('../models/user');
 router.use(passport.initialize());
 router.use(passport.session());
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
     done(null, user.userName);
 });
 
 
-passport.deserializeUser(function(username, done) {
+passport.deserializeUser(function (username, done) {
     User.findOne({userName: username}, function (err, user) {
-        if(err) {
+        if (err) {
             return done(err);
         }
         return done(null, user);
@@ -23,44 +23,26 @@ passport.deserializeUser(function(username, done) {
 });
 
 passport.use(new LocalStrategy(
-    { usernameField : 'user[name]',
-        passwordField : 'user[password]'
+    {
+        usernameField: 'user[name]',
+        passwordField: 'user[password]'
     },
     function (username, password, done) {
-        console.log('ceva');
-        User.find({userName: username}, function (err, user) {
-            console.log(user);
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done(null, false, {message: 'Incorrect username.'});
-            }
-            if (user.password !== password) {
-                return done(null, false, {message: 'Incorrect password.'});
-            }
-            return done(null, user);
-        });
+        User.findUserName(username, password, done)
     }
 ));
 
 //Register
-router.get('/register', function (req, res) {
+router.get('/register', (req, res) => {
     res.render('register')
 });
-router.post('/register', function (req, res) {
+router.post('/register', (req, res) => {
     let newUser = new User({
         userName: req.body.user.name,
         password: req.body.user.password
     });
 
-    User.create(newUser, function (err, newUser) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(newUser);
-        }
-    });
+    User.createUser(newUser);
     res.redirect('/')
 });
 
