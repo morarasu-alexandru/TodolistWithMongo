@@ -3,7 +3,6 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
-const loggedIn = require('../middlewares/logged');
 
 
 router.use(passport.initialize());
@@ -44,7 +43,7 @@ router.post('/register', (req, res) => {
     });
 
     User.createUser(newUser);
-    res.redirect('/')
+    res.redirect('/login');
 });
 
 // Login page
@@ -53,16 +52,13 @@ router.get('/login', function (req, res) {
 });
 
 router.post('/login', passport.authenticate('local', {
-        successRedirect: '/',
+        successRedirect: '/todo',
         failureRedirect: '/login',
         failureFlash: false
     }),
     (req, res) => {
-        res.send('merge');
-        res.redirect('/');
+        res.redirect('/todo');
     });
-
-module.exports = router;
 
 router.get('/logout', (req, res) => {
     console.log(req.user);
@@ -72,12 +68,4 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-router.get('/test',loggedIn, (req, res) => {
-    console.log(req.session);
-   res.send('merge');
-});
-
-router.get('/test2', (req, res) => {
-    console.log(req.user);
-    res.send('merge2');
-});
+module.exports = router;

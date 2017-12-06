@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do complete app</title>
+    <link rel="stylesheet" href="/stylesheet/main.css">
+    <script src="/js/main.js" defer></script>
+</head>
+<body id="body">
+<div id="target">
+    <h1>To do app</h1>
+    <% include ./partials/navigationMenu %>
+    <% if (session.user) { %>
+
+    <form id="formTask" action="/todo" method="post">
+        <label for="todo">To do:</label>
+        <input id="todo" name="task" type="text" placeholder="Add new to do">
+        <button id="SubmitButton" type="submit">Submit</button>
+    </form>
+    <% } %>
+
+</div>
+<% if (session.user) { %>
+
+<ul id="todoList">
+
+    <% for(var i = 0; i < todolist.length; i ++) { %>
+        <li data-id="<%=i%>">
+            <span><%=todolist[i]%></span>
+            <form action="/removetodo/<%=i%>" method="post">
+                <button type="submit">X</button>
+            </form>
+        </li>
+    <% } %>
+</ul>
+<% } %>
+</body>
+</html>

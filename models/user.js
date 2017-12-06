@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+mongoose.Promise = require('bluebird');
 
 const userSchema = new mongoose.Schema({
     userName: String,
@@ -12,7 +13,7 @@ mongoose.connect('mongodb://localhost/to_do_app', {
 
 let db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function () {
+db.once('open', () => {
     // we're connected!
     console.log('We are connected to Data base');
 });
@@ -31,6 +32,7 @@ User.findUserName = (username, password, done) => {
         if (user.password !== password) {
             return done(null, false, {message: 'Incorrect password.'});
         }
+
         return done(null, user);
     });
 };

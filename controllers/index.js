@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
 });
 
 router.use('', require('./users'));
+router.use('', require('./todo'));
 
 
 module.exports = router;
